@@ -13,7 +13,6 @@
 """Pythonic simple SOAP Client implementation"""
 
 from __future__ import unicode_literals
-import sys
 
 try:
     import cPickle as pickle
@@ -213,7 +212,8 @@ class SoapClient(object):
 
     def send(self, method, xml):
         """Send SOAP request using HTTP"""
-        if self.location == 'test': return
+        if self.location == 'test':
+            return
         # location = '%s' % self.location #?op=%s" % (self.location, method)
         location = str(self.location)
 
@@ -344,10 +344,6 @@ class SoapClient(object):
             # Is master a class? cannot use isinstance or issubclass to determine effectively
             try:
                 masterisclass = str(type(master))[:7] == '<class '
-                if masterisclass:
-                    print "zzz master is a class %s" % ( type(master) )
-		if isinstance(master, type):
-                    print "zzzz master is a type %s" % ( type(master) )
             except:
                 pass
 
@@ -359,7 +355,7 @@ class SoapClient(object):
                 errors.append('class mismatch for value. master(%s): %s, test(%s): %s' % (type(master), master, type(test), test))
         elif isinstance(master, type):
             # attempt to cast input to master type
-	    if type(test) != master:
+            if type(test) != master:
                 valid = False
                 errors.append('type mismatch for value. master(%s): %s, test(%s): %s' % (type(master), master, type(test), test))
 

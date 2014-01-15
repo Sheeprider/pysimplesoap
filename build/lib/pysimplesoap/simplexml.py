@@ -464,7 +464,6 @@ class SimpleXMLElement(object):
                         ref_name_type = ref_node['xsi:type'].split(":")[1]
                         break
             try:
-		print "Unlarshall type = %s, types= %s " % (name, types)
                 fn = types[name]
             except (KeyError, ) as e:
                 if node.get_namespace_uri("soapenc"):
