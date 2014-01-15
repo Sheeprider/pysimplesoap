@@ -26,8 +26,6 @@ import warnings
 import xml.dom.minidom
 from decimal import Decimal
 
-from . import __author__, __copyright__, __license__, __version__
-
 log = logging.getLogger(__name__)
 
 try:
@@ -40,24 +38,27 @@ except AttributeError:  # python2.4
 def datetime_u(s):
     fmt = "%Y-%m-%dT%H:%M:%S"
     try:
-        return _strptime(s, fmt)
+        return datetime.datetime.strptime(s, fmt)
     except ValueError:
         try:
             # strip utc offset
-            if s[-3] == ":" and s[-6] in (' ', '-', '+'):
+            if re.search(r'.+[-+ ]\d{2}:?\d{2}$', s):
                 warnings.warn('removing unsupported UTC offset', RuntimeWarning)
-                s = s[:-6]
+                if ':' in s[:-3]:
+                    s = s[:-6]
+                else:
+                    s = s[:-5]
             # parse microseconds
             try:
-                return _strptime(s, fmt + ".%f")
+                return datetime.datetime.strptime(s, fmt + ".%f")
             except:
-                return _strptime(s, fmt)
+                return datetime.datetime.strptime(s, fmt)
         except ValueError:
             # strip microseconds (not supported in this platform)
             if "." in s:
                 warnings.warn('removing unsuppported microseconds', RuntimeWarning)
                 s = s[:s.index(".")]
-            return _strptime(s, fmt)
+            return datetime.datetime.strptime(s, fmt)
 
 datetime_m = lambda dt: dt.isoformat()
 date_u = lambda s: _strptime(s[0:10], "%Y-%m-%d").date()
@@ -454,14 +455,14 @@ class SimpleXMLElement(object):
         d = {}
         for node in self():
             name = str(node.get_local_name())
-            ref_name_type = None
+            # ref_name_type = None
             # handle multirefs: href="#id0"
             if 'href' in node.attributes().keys():
                 href = node['href'][1:]
                 for ref_node in self(root=True)("multiRef"):
                     if ref_node['id'] == href:
                         node = ref_node
-                        ref_name_type = ref_node['xsi:type'].split(":")[1]
+                        # ref_name_type = ref_node['xsi:type'].split(":")[1]
                         break
             try:
                 fn = types[name]
@@ -517,8 +518,8 @@ class SimpleXMLElement(object):
                     value = tuple(value)
 
             elif isinstance(fn, dict):
-                ##if ref_name_type is not None:
-                ##    fn = fn[ref_name_type]
+                # if ref_name_type is not None:
+                #     fn = fn[ref_name_type]
                 children = node.children()
                 value = children and children.unmarshall(fn, strict)
             else:
