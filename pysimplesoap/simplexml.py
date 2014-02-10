@@ -105,6 +105,7 @@ TYPE_MAP = {
     Decimal: 'decimal',
     datetime.datetime: 'dateTime',
     datetime.date: 'date',
+    list: 'Array',
 }
 TYPE_MARSHAL_FN = {
     datetime.datetime: datetime_m,
