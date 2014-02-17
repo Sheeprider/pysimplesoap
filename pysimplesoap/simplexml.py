@@ -479,7 +479,7 @@ class SimpleXMLElement(object):
                     # if not strict, use default type conversion
                     fn = str
 
-            if isinstance(fn, list):
+            if fn is list:
                 # append to existing list (if any) - unnested dict arrays -
                 value = d.setdefault(name, [])
                 children = node.children()
@@ -495,7 +495,8 @@ class SimpleXMLElement(object):
                         value.append(tmp_dict)
                 else:  # .Net / Java
                     for child in (children or []):
-                        value.append(child.unmarshall(fn[0], strict))
+                        # value.append(child.unmarshall(fn[0], strict))
+                        value.append(child.unmarshall(types, strict))
 
             elif isinstance(fn, tuple):
                 value = []
