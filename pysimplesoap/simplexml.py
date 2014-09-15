@@ -422,16 +422,18 @@ class SimpleXMLElement(object):
     def __unicode__(self):
         """Returns the unicode text nodes of the current element"""
         if self._element.childNodes:
-            rc = ""
+            rc = u''
             for node in self._element.childNodes:
                 if node.nodeType == node.TEXT_NODE:
-                    rc = rc + node.data
+                    text = node.data.encode('utf-8')
+                    text = text.decode('utf-8')
+                    rc = rc + text
             return rc
-        return ''
+        return u''
 
     def __str__(self):
         """Returns the str text nodes of the current element"""
-        return self.__unicode__()
+        return self.__unicode__().encode('utf-8')
 
     def __int__(self):
         """Returns the integer value of the current element"""
